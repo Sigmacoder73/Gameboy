@@ -1,0 +1,154 @@
+/* Custom Styles for Gamezop Arcade */
+
+/* Scrollbars */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.8);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.6);
+}
+
+/* Skeleton Loading Cards */
+.skeleton-card {
+  aspect-ratio: 1 / 1.35;
+  border-radius: 1rem;
+  background: linear-gradient(
+    90deg,
+    rgba(30, 41, 59, 0.4) 0%,
+    rgba(51, 65, 85, 0.6) 50%,
+    rgba(30, 41, 59, 0.4) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.5s infinite;
+  border: 1px solid rgba(51, 65, 85, 0.3);
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Game Card Styles */
+.game-card {
+  position: relative;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  background: #111726;
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(6, 182, 212, 0.7);
+  box-shadow: 0 12px 30px -10px rgba(6, 182, 212, 0.25);
+}
+
+.game-card .card-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  background-color: #0f172a;
+}
+
+.game-card:hover .card-thumb {
+  transform: scale(1.06);
+}
+
+.game-card .play-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.4) 60%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+.game-card:hover .play-overlay {
+  opacity: 1;
+}
+
+/* Favorite Button Pulse on Click */
+.fav-btn.active {
+  color: #f43f5e !important;
+  background-color: rgba(244, 63, 94, 0.15) !important;
+}
+
+/* Phone Frame Simulator */
+.phone-mode-wrapper {
+  max-width: 420px !important;
+  height: 90vh !important;
+  max-height: 840px !important;
+  border-radius: 40px !important;
+  border: 8px solid #1e293b !important;
+  box-shadow: 0 0 0 2px #334155, 0 25px 60px -15px rgba(0, 0, 0, 0.9) !important;
+  position: relative;
+}
+
+.phone-mode-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 18px;
+  background: #1e293b;
+  border-radius: 10px;
+  z-index: 25;
+}
+
+/* Theater Mode */
+.theater-mode-wrapper {
+  max-width: 96vw !important;
+  height: 90vh !important;
+  border-radius: 1rem !important;
+}
+
+/* Screen Fit Mode */
+.screenfit-mode-wrapper {
+  max-width: 1100px !important;
+  height: 85vh !important;
+  border-radius: 1.25rem !important;
+}
+
+/* Category Pill Active State */
+.cat-pill.active {
+  background-color: #06b6d4 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 20px -6px rgba(6, 182, 212, 0.4);
+}
+
+/* Orientation Button Active State */
+.orient-btn.active {
+  background-color: #1e293b !important;
+  color: #67e8f9 !important;
+}

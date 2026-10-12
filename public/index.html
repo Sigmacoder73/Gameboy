@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamezop Arcade | Play Free Instant HTML5 Games</title>
+  <meta name="description" content="Play instant HTML5 games powered by the Gamezop Games API. Discover hundreds of arcade, puzzle, action, and board games right in your browser.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%200%20100%20100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+  
+  <!-- Google Fonts & Tailwind CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              purple: '#8b5cf6',
+              cyan: '#06b6d4',
+              pink: '#ec4899',
+              dark: '#090d16',
+              card: '#111726',
+              border: '#1e293b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#090d16] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-black">
+
+  <!-- Ambient Background Glows -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/15 rounded-full blur-[128px]"></div>
+    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-cyan-600/15 rounded-full blur-[128px]"></div>
+    <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-pink-600/10 rounded-full blur-[128px]"></div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-[#090d16]/85 border-b border-slate-800/80 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded-xl p-1">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 p-[2px] shadow-lg shadow-purple-500/20 group-hover:shadow-cyan-500/30 transition-all">
+          <div class="w-full h-full bg-[#090d16] rounded-[10px] flex items-center justify-center">
+            <span class="text-2xl group-hover:scale-110 transition-transform">🎮</span>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-bold font-display tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-300 bg-clip-text text-transparent">GAMEZOP</span>
+            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">ARCADE</span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Instant HTML5 Games Network</p>
+        </div>
+      </a>
+
+      <!-- Center Search Bar -->
+      <div class="flex-1 max-w-md hidden md:block">
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </span>
+          <input 
+            type="text" 
+            id="searchInput"
+            placeholder="Search 250+ games by title, genre, or keyword... (Press / to focus)" 
+            class="w-full pl-10 pr-10 py-2.5 bg-slate-900/80 border border-slate-700/80 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+          >
+          <button id="searchClearBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Navigation Items -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Random Game Button -->
+        <button id="randomGameBtn" title="Play Random Game" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/70 text-slate-200 text-xs font-semibold flex items-center gap-2 transition hover:border-cyan-500/40">
+          <span>🎲</span>
+          <span class="hidden lg:inline">Surprise Me</span>
+        </button>
+
+        <!-- Favorites Button -->
+        <button id="favTabBtn" class="relative px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/70 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition hover:border-pink-500/40">
+          <span class="text-pink-400">❤️</span>
+          <span class="hidden sm:inline">Favorites</span>
+          <span id="favCountBadge" class="hidden px-1.5 py-0.2 bg-pink-500/20 text-pink-300 rounded-full text-[10px] font-bold">0</span>
+        </button>
+
+        <!-- API Status / Settings Button -->
+        <button id="apiSettingsBtn" class="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700/80 text-xs font-semibold transition hover:border-cyan-400">
+          <span id="apiStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-sm animate-pulse"></span>
+          <span id="apiStatusLabel" class="hidden sm:inline text-slate-200">Demo Mode</span>
+          <svg class="w-3.5 h-3.5 text-slate-400 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div class="px-4 pb-3 md:hidden">
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </span>
+        <input 
+          type="text" 
+          id="mobileSearchInput"
+          placeholder="Search games..." 
+          class="w-full pl-9 pr-8 py-2 bg-slate-900 border border-slate-700/80 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-cyan-400 text-slate-200"
+        >
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
+
+    <!-- Top API Notice Banner (Dismissible / Informative) -->
+    <div id="apiInfoBanner" class="mb-6 p-4 rounded-2xl bg-gradient-to-r from-purple-950/40 via-indigo-950/40 to-slate-900/60 border border-purple-500/20 backdrop-blur-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center shrink-0 text-xl">
+          ⚡
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-white flex items-center gap-2">
+            Gamezop v3 Games API Ready
+            <span class="px-2 py-0.5 rounded-full text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">GET /v3/games</span>
+          </h2>
+          <p id="apiBannerText" class="text-xs text-slate-300 mt-0.5">
+            Running with 250+ instant games. You can connect your publisher Bearer token anytime to load your verified Gamezop catalog.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-end md:self-auto shrink-0">
+        <button id="bannerConnectBtn" class="px-3.5 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition shadow-lg shadow-cyan-500/20">
+          Connect API Token
+        </button>
+        <button id="bannerDismissBtn" title="Dismiss" class="p-1.5 text-slate-400 hover:text-slate-200 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero Spotlight Section -->
+    <section id="heroSection" class="mb-10 relative rounded-3xl overflow-hidden border border-slate-800 bg-slate-900/90 shadow-2xl group">
+      <div class="absolute inset-0 bg-gradient-to-r from-[#090d16] via-[#090d16]/80 to-transparent z-10 pointer-events-none"></div>
+      <div id="heroBackdrop" class="absolute inset-0 bg-cover bg-center opacity-40 group-hover:scale-105 transition-transform duration-700 blur-[2px]"></div>
+
+      <div class="relative z-20 p-6 sm:p-10 lg:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="max-w-xl">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+              Spotlight Game
+            </span>
+            <span id="heroCategory" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/80 text-slate-300 border border-slate-700">Arcade</span>
+            <span id="heroOrientation" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/80 text-slate-300 border border-slate-700">📱 Mobile Ready</span>
+          </div>
+
+          <h1 id="heroTitle" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display tracking-tight text-white mb-3">
+            Hextris
+          </h1>
+
+          <p id="heroDescription" class="text-slate-300 text-sm sm:text-base leading-relaxed line-clamp-3 mb-6">
+            Rotate the hexagon to match colors and clear lines before the blocks reach the outer boundary in this addictive fast-paced puzzle arcade!
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="heroPlayBtn" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-bold text-sm flex items-center gap-2.5 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-[0.98] transition">
+              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <span>Play Now Free</span>
+            </button>
+            <button id="heroFavBtn" class="px-4 py-3 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 text-sm font-semibold flex items-center gap-2 transition">
+              <span class="text-pink-400">❤️</span>
+              <span>Favorite</span>
+            </button>
+            <button id="heroNewTabBtn" class="px-4 py-3 rounded-2xl bg-slate-800/60 hover:bg-slate-700/80 border border-slate-700/70 text-slate-300 text-sm font-semibold flex items-center gap-1.5 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+              <span>Open in New Tab</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Hero Thumbnail Card -->
+        <div class="relative shrink-0">
+          <div class="w-56 sm:w-64 aspect-square rounded-2xl overflow-hidden border-2 border-slate-700/80 shadow-2xl relative group-hover:border-cyan-400/50 transition">
+            <img id="heroImage" src="https://static.gamezop.com/Ey5Wzu1MZ9l/cover.jpg" alt="Featured game preview" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+              <div class="text-xs text-slate-300 font-semibold flex items-center gap-2">
+                <span id="heroPlays" class="text-cyan-300">⭐ 4.5 Rating</span>
+                <span>•</span>
+                <span id="heroPlaysCount">15M+ Plays</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recently Played Carousel (Hidden until games are played) -->
+    <section id="recentSection" class="hidden mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
+          <span>🕒</span> Continue Playing
+        </h2>
+        <button id="clearRecentBtn" class="text-xs text-slate-400 hover:text-rose-400 transition">Clear History</button>
+      </div>
+      <div id="recentContainer" class="flex gap-4 overflow-x-auto pb-2 scrollbar-thin"></div>
+    </section>
+
+    <!-- Catalog Controls: Categories, Filters & Sort -->
+    <div class="mb-6 space-y-4">
+      <!-- Category Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="categoryPills">
+        <button data-cat="all" class="cat-pill active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 bg-cyan-500 text-black shadow-lg shadow-cyan-500/20">
+          <span>🌟</span> All Games (<span id="totalGamesBadge">0</span>)
+        </button>
+        <button data-cat="Arcade" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800">
+          <span>🕹️</span> Arcade
+        </button>
+        <button data-cat="Puzzle" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800">
+          <span>🧩</span> Puzzle & Brain
+        </button>
+        <button data-cat="Action" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800">
+          <span>⚔️</span> Action & Battle
+        </button>
+        <button data-cat="Board & Card" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800">
+          <span>♟️</span> Board & Card
+        </button>
+        <button data-cat="Sports & Racing" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800">
+          <span>🏎️</span> Sports & Racing
+        </button>
+        <button data-cat="Strategy" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800">
+          <span>👑</span> Strategy
+        </button>
+        <button data-cat="Casual" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800">
+          <span>💅</span> Casual & Fun
+        </button>
+      </div>
+
+      <!-- Secondary Filters & Sort Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+        <!-- Orientation Filters -->
+        <div class="flex items-center gap-1.5 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+          <button data-orientation="all" class="orient-btn active px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-800 text-cyan-300">
+            All Orientations
+          </button>
+          <button data-orientation="portrait" class="orient-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+            📱 Mobile Portrait
+          </button>
+          <button data-orientation="landscape" class="orient-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+            🖥️ Desktop Widescreen
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Sort Dropdown -->
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <span>Sort by:</span>
+            <select id="sortSelect" class="bg-slate-900 border border-slate-700/80 text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-cyan-400 text-xs">
+              <option value="popular">🔥 Most Popular</option>
+              <option value="rating">⭐ Top Rated</option>
+              <option value="name-asc">🔤 Title (A - Z)</option>
+              <option value="name-desc">🔡 Title (Z - A)</option>
+            </select>
+          </div>
+
+          <!-- Active Results Count -->
+          <span id="resultsCountLabel" class="text-xs text-slate-400">Showing 0 games</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Filter Tags Display (When searching or filtering favorites) -->
+    <div id="filterTagContainer" class="hidden mb-4 flex items-center gap-2 flex-wrap"></div>
+
+    <!-- Game Catalog Grid -->
+    <div id="gamesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5">
+      <!-- Skeleton Loaders -->
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-20 px-4">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-3xl">
+        🔍
+      </div>
+      <h3 class="text-lg font-bold text-white mb-1">No games match your criteria</h3>
+      <p class="text-slate-400 text-sm max-w-sm mx-auto mb-6">Try adjusting your search terms, changing the category, or clearing orientation filters.</p>
+      <button id="resetFiltersBtn" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition">
+        Reset All Filters
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Game Player Modal / Cinema Stage -->
+  <div id="playerModal" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-2xl flex flex-col transition-opacity duration-300 opacity-0">
+    <!-- Player Top Navigation Bar -->
+    <div class="h-16 border-b border-slate-800/80 px-4 sm:px-6 flex items-center justify-between gap-4 bg-[#090d16]/90 shrink-0">
+      
+      <!-- Left: Game Info -->
+      <div class="flex items-center gap-3 min-w-0">
+        <button id="closePlayerBtn" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Close Game (Esc)">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="min-w-0">
+          <h3 id="playerGameTitle" class="text-sm sm:text-base font-bold text-white truncate">Game Title</h3>
+          <div class="flex items-center gap-2 text-[11px] text-slate-400">
+            <span id="playerCategoryTag" class="text-cyan-400">Arcade</span>
+            <span>•</span>
+            <span id="playerOrientationTag">📱 Mobile</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Layout View Toggles -->
+      <div class="hidden md:flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+        <button id="viewPhoneBtn" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5" title="Smartphone Frame View">
+          <span>📱</span> Phone Frame
+        </button>
+        <button id="viewWideBtn" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5" title="Fit to Screen">
+          <span>🖥️</span> Screen Fit
+        </button>
+        <button id="viewTheaterBtn" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5" title="Theater / Full Width">
+          <span>🎬</span> Theater
+        </button>
+      </div>
+
+      <!-- Right: Actions -->
+      <div class="flex items-center gap-2">
+        <!-- Reload Game -->
+        <button id="reloadGameBtn" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Restart Game">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+        </button>
+
+        <!-- Toggle Favorite in Player -->
+        <button id="playerFavBtn" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-pink-400 transition" title="Toggle Favorite">
+          <span class="text-base">❤️</span>
+        </button>
+
+        <!-- Fullscreen Button -->
+        <button id="playerFullscreenBtn" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Fullscreen (F)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+        </button>
+
+        <!-- Pop-out in New Tab -->
+        <a id="playerPopoutBtn" href="#" target="_blank" rel="noopener noreferrer" class="p-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition flex items-center gap-1.5 text-xs font-bold" title="Open in New Tab">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          <span class="hidden sm:inline">Pop Out</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Game Stage (Launchpad & Iframe Container) -->
+    <div class="flex-1 flex items-center justify-center p-3 sm:p-6 overflow-y-auto relative" id="stageContainer">
+      
+      <!-- Native Launchpad Card (Never blocked by CSP / frame-ancestors) -->
+      <div id="gameLaunchpad" class="max-w-2xl w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative z-20 backdrop-blur-xl">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
+          <div class="w-36 h-36 rounded-2xl overflow-hidden border-2 border-slate-700 shrink-0 shadow-lg relative bg-slate-950">
+            <img id="launchpadCover" src="" alt="Game Cover" class="w-full h-full object-cover">
+            <span id="launchpadOrientationBadge" class="absolute bottom-2 left-2 px-2 py-0.5 rounded text-[10px] font-bold bg-black/80 text-cyan-300 border border-cyan-500/30">
+              📱 Mobile
+            </span>
+          </div>
+
+          <div class="flex-1 text-center sm:text-left">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+              <span id="launchpadCategory" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Arcade</span>
+              <span id="launchpadPlays" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">⭐ 4.5 • 10M Plays</span>
+            </div>
+            <h2 id="launchpadTitle" class="text-2xl sm:text-3xl font-extrabold text-white mb-2 font-display">Game Title</h2>
+            <p id="launchpadDescription" class="text-xs sm:text-sm text-slate-300 leading-relaxed line-clamp-3 mb-4">
+              Game description goes here.
+            </p>
+          </div>
+        </div>
+
+        <!-- Primary Launch Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+          <button id="launchWindowBtn" class="py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-extrabold text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-cyan-500/25 hover:scale-[1.02] active:scale-[0.98] transition">
+            <span class="text-lg">🎮</span>
+            <span>Launch Game Window</span>
+          </button>
+          <a id="launchTabBtn" href="#" target="_blank" rel="noopener noreferrer" class="py-3.5 px-5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm flex items-center justify-center gap-2.5 border border-slate-700 transition">
+            <span class="text-lg">🚀</span>
+            <span>Open in Full Tab</span>
+          </a>
+        </div>
+
+        <!-- Security / CSP Notice & Embedded Toggle -->
+        <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-400">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-semibold text-slate-300 flex items-center gap-1.5">
+              <span>🛡️</span> Gamezop Security Note
+            </span>
+            <button id="toggleIframeViewBtn" class="text-cyan-400 hover:underline text-[11px] font-medium">
+              Try Embedded iFrame &rarr;
+            </button>
+          </div>
+          <p class="text-[11px] leading-relaxed text-slate-400">
+            Gamezop uses <code class="text-cyan-300">frame-ancestors 'self'</code> policy to protect publisher games from unauthorized framing. If an iframe shows <em>"refused to connect"</em>, use <strong>Launch Game Window</strong> above for full unrestricted gameplay!
+          </p>
+        </div>
+      </div>
+
+      <!-- Optional Embedded Iframe Container (Can be toggled) -->
+      <div id="gameFrameWrapper" class="hidden relative transition-all duration-300 w-full h-full max-w-4xl max-h-full rounded-2xl overflow-hidden bg-black shadow-2xl border border-slate-800 z-10">
+        
+        <!-- Loading spinner for iframe -->
+        <div id="playerLoading" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#090d16] z-10 transition-opacity">
+          <div class="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-400 rounded-full animate-spin"></div>
+          <p class="text-sm font-semibold text-slate-300 animate-pulse">Loading Gamezop Frame...</p>
+        </div>
+
+        <iframe 
+          id="gameIframe" 
+          src="about:blank" 
+          class="w-full h-full border-0" 
+          allow="autoplay; fullscreen; screen-wake-lock; clipboard-write; web-share" 
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+        ></iframe>
+      </div>
+
+    </div>
+
+    <!-- Player Bottom Helper Bar -->
+    <div class="h-10 px-4 bg-[#090d16] border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 shrink-0">
+      <div class="truncate max-w-md">
+        <span id="playerDescSnippet" class="truncate">Instructions & Tips</span>
+      </div>
+      <div class="flex items-center gap-4 shrink-0">
+        <span class="hidden sm:inline">Press <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">Esc</kbd> to exit</span>
+        <a id="playerDirectLink" href="#" target="_blank" class="text-cyan-400 hover:underline">Having trouble? Open directly &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Settings & Token Setup Modal -->
+  <div id="settingsModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-[#0f172a] border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+      
+      <!-- Close Settings -->
+      <button id="closeSettingsBtn" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center gap-3.5 mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 flex items-center justify-center text-2xl">
+          ⚙️
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-display text-white">Gamezop API Configuration</h3>
+          <p class="text-xs text-slate-400">Connect your live publisher catalog or test with demo mode</p>
+        </div>
+      </div>
+
+      <!-- Current Status Card -->
+      <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 mb-6 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">Current Mode:</span>
+          <span id="settingsCurrentMode" class="font-bold text-amber-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span> Demo Mode (250+ Games)
+          </span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">Endpoint:</span>
+          <span class="font-mono text-[11px] text-slate-300">https://api.gamezop.com/v3/games</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">Token Status:</span>
+          <span id="settingsTokenStatus" class="text-slate-300">Not configured (using sample fallback)</span>
+        </div>
+      </div>
+
+      <!-- Token Input Form -->
+      <form id="tokenForm" class="space-y-4">
+        <div>
+          <label for="tokenInput" class="block text-xs font-semibold text-slate-200 mb-1.5">
+            Publisher Bearer Token
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="tokenInput" 
+              placeholder="Paste Bearer token here..."
+              class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm placeholder-slate-500 text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 font-mono"
+            >
+            <button type="button" id="toggleTokenVisibility" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white text-xs">
+              Show
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1.5">
+            Matches: <code class="text-cyan-400">Authorization: Bearer &lt;token&gt;</code>. Saved safely in local server environment.
+          </p>
+        </div>
+
+        <!-- Alert messages -->
+        <div id="settingsAlert" class="hidden p-3 rounded-xl text-xs"></div>
+
+        <!-- Action buttons -->
+        <div class="flex items-center gap-3 pt-2">
+          <button 
+            type="submit" 
+            id="saveTokenBtn"
+            class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-bold text-xs transition shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
+          >
+            <span id="saveBtnText">Verify & Connect Token</span>
+          </button>
+          <button 
+            type="button" 
+            id="resetDemoBtn" 
+            class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition"
+          >
+            Use Demo Mode
+          </button>
+        </div>
+      </form>
+
+      <!-- Explainer box -->
+      <div class="mt-6 pt-5 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1">
+        <p class="font-semibold text-slate-300">How this works:</p>
+        <p>1. The backend makes the authenticated request to Gamezop v3 API with your token.</p>
+        <p>2. Games are dynamically cataloged with cover art, playable URLs, and categories.</p>
+        <p>3. If no token is provided, you can freely explore the built-in demo catalog.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-[#090d16] py-8 mt-12 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="text-base">🎮</span>
+        <span class="font-bold text-slate-300">Gamezop Arcade</span>
+        <span>•</span>
+        <span>Powered by Gamezop All Games API</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span>Instant HTML5 Gaming</span>
+        <span>•</span>
+        <a href="https://www.gamezop.com" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline">Gamezop Platform</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
